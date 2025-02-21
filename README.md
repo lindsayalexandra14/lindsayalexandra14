@@ -1,6 +1,5 @@
 - 💟 Hi, I’m @lindsayalexandra14 ✨
 - 🔢 I’m interested in data science
-- 😄 Pronouns: she/her
 - 🤍 
     
 <!---
