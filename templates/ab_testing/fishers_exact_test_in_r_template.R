@@ -217,20 +217,25 @@ cat(strwrap(pvalue_message, width = 80), sep = "\n")
 lower_ci <- result$conf.int[1]
 upper_ci <- result$conf.int[2]
 
+# Make sure p1_label and p2_label are defined
+# Example:
+# p1_label <- "Group A"
+# p2_label <- "Group B"
+
 if (alternative == "less") {
   if (upper_ci < 1) {
     percent_diff <- (1 - upper_ci) * 100
     sentence <- paste0(
       sprintf("95%% CI Upper Bound for Odds Ratio: %.3f.", upper_ci), "\n\n",
-      sprintf("With %.0f%% confidence, the control group (p₁) has lower odds of conversion than the treatment group (p₂).", (1 - alpha) * 100), "\n",
-      sprintf("The odds of conversion in the control group are up to %.1f%% lower than in the treatment group.", percent_diff), "\n",
-      "This supports the hypothesis that treatment is better than control."
+      sprintf("With %.0f%% confidence, %s (p₁) has lower odds of conversion than %s (p₂).", (1 - alpha) * 100, p1_label, p2_label), "\n",
+      sprintf("The odds of conversion in %s are up to %.1f%% lower than in %s.", p1_label, percent_diff, p2_label), "\n",
+      sprintf("This supports the hypothesis that %s is better than %s.", p2_label, p1_label)
     )
   } else {
     sentence <- paste0(
       sprintf("95%% CI Upper Bound for Odds Ratio: %.3f.", upper_ci), "\n\n",
-      sprintf("With %.0f%% confidence, we cannot rule out that the treatment group is not better than the control group.", (1 - alpha) * 100), "\n",
-      "This does not support the hypothesis that treatment is better."
+      sprintf("With %.0f%% confidence, we cannot rule out that %s is not better than %s.", (1 - alpha) * 100, p2_label, p1_label), "\n",
+      sprintf("This does not support the hypothesis that %s is better.", p2_label)
     )
   }
 
@@ -239,15 +244,15 @@ if (alternative == "less") {
     percent_diff <- (lower_ci - 1) * 100
     sentence <- paste0(
       sprintf("95%% CI Lower Bound for Odds Ratio: %.3f.", lower_ci), "\n\n",
-      sprintf("With %.0f%% confidence, the treatment group (p₂) has higher odds of conversion than the control group (p₁).", (1 - alpha) * 100), "\n",
-      sprintf("The odds of conversion in the treatment group are at least %.1f%% higher than in the control group.", percent_diff), "\n",
-      "This supports the hypothesis that treatment is better than control."
+      sprintf("With %.0f%% confidence, %s (p₁) has higher odds of conversion than %s (p₂).", (1 - alpha) * 100, p1_label, p2_label), "\n",
+      sprintf("The odds of conversion in %s are at least %.1f%% higher than in %s.", p1_label, percent_diff, p2_label), "\n",
+      sprintf("This supports the hypothesis that %s is better than %s.", p1_label, p2_label)
     )
   } else {
     sentence <- paste0(
       sprintf("95%% CI Lower Bound for Odds Ratio: %.3f.", lower_ci), "\n\n",
-      sprintf("With %.0f%% confidence, we cannot rule out that the treatment group is not better than the control group.", (1 - alpha) * 100), "\n",
-      "This does not support the hypothesis that treatment is better."
+      sprintf("With %.0f%% confidence, we cannot rule out that %s is not better than %s.", (1 - alpha) * 100, p1_label, p2_label), "\n",
+      sprintf("This does not support the hypothesis that %s is better.", p1_label)
     )
   }
 
@@ -256,22 +261,20 @@ if (alternative == "less") {
     percent_diff <- (lower_ci - 1) * 100
     sentence <- paste0(
       sprintf("95%% CI: [%.3f, %.3f].", lower_ci, upper_ci), "\n\n",
-      sprintf("With %.0f%% confidence, the treatment group (p₂) has higher odds of conversion than the control group (p₁).", (1 - alpha) * 100), "\n",
-      sprintf("The odds of conversion in the treatment group are at least %.1f%% higher than in the control group.", percent_diff), "\n",
-      "This supports a significant difference favoring treatment."
+      sprintf("With %.0f%% confidence, there is a statistically significant difference in odds of conversion between %s (p₁) and %s (p₂).", (1 - alpha) * 100, p1_label, p2_label), "\n",
+      sprintf("The confidence interval suggests that the odds of conversion in %s may be at least %.1f%% higher than in %s.", p1_label, percent_diff, p2_label)
     )
   } else if (upper_ci < 1) {
     percent_diff <- (1 - upper_ci) * 100
     sentence <- paste0(
       sprintf("95%% CI: [%.3f, %.3f].", lower_ci, upper_ci), "\n\n",
-      sprintf("With %.0f%% confidence, the control group (p₁) has lower odds of conversion than the treatment group (p₂).", (1 - alpha) * 100), "\n",
-      sprintf("The odds of conversion in the control group are up to %.1f%% lower than in the treatment group.", percent_diff), "\n",
-      "This supports a significant difference favoring treatment."
+      sprintf("With %.0f%% confidence, there is a statistically significant difference in odds of conversion between %s (p₁) and %s (p₂).", (1 - alpha) * 100, p1_label, p2_label), "\n",
+      sprintf("The confidence interval suggests that the odds of conversion in %s may be up to %.1f%% lower than in %s.", p1_label, percent_diff, p2_label)
     )
   } else {
     sentence <- paste0(
       sprintf("95%% CI: [%.3f, %.3f].", lower_ci, upper_ci), "\n\n",
-      sprintf("With %.0f%% confidence, we cannot rule out no difference in odds between treatment and control.", (1 - alpha) * 100), "\n",
+      sprintf("With %.0f%% confidence, we cannot rule out no difference in odds between %s and %s.", (1 - alpha) * 100, p1_label, p2_label), "\n",
       "This does not support a statistically significant difference."
     )
   }
@@ -279,6 +282,7 @@ if (alternative == "less") {
 
 cat(sentence, "\n\n")
 
+# Significance check
 includes_one <- (lower_ci <= 1) && (upper_ci >= 1)
 
 message <- if (includes_one) {
@@ -288,6 +292,7 @@ message <- if (includes_one) {
 }
 
 cat(message)
+
 
 # ----------------------------
 # ⚡ Statistical Power of the Result
